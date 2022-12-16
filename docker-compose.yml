@@ -1,0 +1,63 @@
+version: "3"
+
+networks:
+  default:
+    external:
+      name: network
+
+services:
+  back_app:
+    depends_on:
+      - db
+    restart: always
+    build: .
+
+    environment:
+      - DB_URL=mongodb://user:fnF4Kn9fewlvFN@db/grandAlbum
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    labels:
+      - traefik.http.routers.back_app.rule=Host(`www.familia.ikatunin.ru`, `familia.ikatunin.ru`)
+      - traefik.http.services.back_app.loadbalancer.server.port=3000
+
+  db:
+    image: mongo
+    container_name: db_mongo
+
+    volumes:
+      - mongodata:/data/db
+      - ./mongod.conf:/etc/mongod.conf
+
+    labels:
+      - traefik.enable=false
+
+#    ports:
+#      - '27017:27017'
+
+    command: mongod --config /etc/mongod.conf
+
+  mongo-express:
+
+    container_name: mongo-express
+    restart: always
+    image: mongo-express
+    depends_on:
+      - db
+      - back_app
+    labels:
+      - traefik.enable=false
+
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=db
+      - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
+      - ME_CONFIG_MONGODB_AUTH_DATABASE=grandAlbum
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=user
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=fnF4Kn9fewlvFN
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=R~qqS9iwjVOqmah9vr1o
+    ports:
+      - '8081:8081'
+
+volumes:
+  mongodata:
