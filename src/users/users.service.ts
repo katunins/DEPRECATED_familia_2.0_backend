@@ -44,7 +44,7 @@ export class UsersService {
     const userId = getReqUserId(req);
     const user = await this.userModel.findById(userId);
     if (!user) {
-      throw new HttpException('108 - Ошибка на сервере (Не найден пользователь)', HttpStatus.BAD_REQUEST);
+      throw new HttpException('108 - Ошибка на сервере (Не найден пользователь)', HttpStatus.UNAUTHORIZED);
     }
     return user;
   }

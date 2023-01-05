@@ -70,19 +70,32 @@ export const removeFilesBackground = (filesToDelete: string[]) => {
 
 interface IGetDataModelWithPagination {
   model: Model<any>,
-  paginationRequest: IPaginationRequest,
-  filterObject: object
+  pagination: IPaginationRequest,
+  searchData?: ISearchData
+  baseFilters?: object[]
 }
 
-export const getDataModelWithPagination = async (
-  {
-    model,
-    paginationRequest,
-    filterObject
-  }: IGetDataModelWithPagination): Promise<{ data: any[], pagination: IPaginationResponse, searchData?: ISearchData }> => {
-  const {page, pageSize} = parsePaginationRequest(paginationRequest)
-  const {searchData} = paginationRequest
-  const searchArr = [filterObject]
+
+/**
+ * Метод делает поиск в модели, учитывая пагинацию и поиск
+ * @param model - модель
+ * @param pagination - аобъект пейджинга
+ * @param searchData - объект поиска (строка поиска и поля)
+ * @param searchArr - массив дополнительных фильтров
+ *
+ * возвращает
+ * page - номер страницы
+ * pageSize - кол-во записей на странице
+ * total - кол-во записей всего, найденных по базовому фильтру с поиском
+ * totalAll - кол-во записей всего в базе, найденных только по базовому фильтру
+ */
+export const getDataModelWithPagination = async <T>(params: IGetDataModelWithPagination): Promise<{ data: T[], pagination: IPaginationResponse }> => {
+
+  const {model, pagination, searchData, baseFilters} = params
+  const {page, pageSize} = parsePaginationRequest(pagination)
+
+  const searchArr = baseFilters
+
   if (searchData) {
     searchArr.push({
       $or: searchData.fields.map(item => ({
@@ -90,16 +103,20 @@ export const getDataModelWithPagination = async (
       }))
     })
   }
+
   const result = await model.find({
     $and: searchArr
   })
+
+  const totalAll = await model.countDocuments({$and: baseFilters})
+
   return {
     data: result.slice(page * pageSize, page * pageSize + pageSize),
-    searchData,
     pagination: {
       page,
       pageSize,
       total: result.length,
+      totalAll
     }
   };
 }

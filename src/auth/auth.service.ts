@@ -15,7 +15,6 @@ export class AuthService {
     }
 
     async signIn({email, password}: SignInDto){
-        console.log({email, password});
         const userId = await this.usersService.getUserIdByCredentials({email, password});
         if (!userId) {
             throw new HttpException('Не верный логин или пароль', HttpStatus.UNAUTHORIZED);

@@ -8,10 +8,11 @@ import {getDataModelWithPagination, getReqUserId, removeFilesBackground} from 's
 import Config from 'src/config';
 import {IPaginationRequest, IPaginationResponse} from 'src/types';
 import {newRelativeDto} from './dto/newRelative.dto';
+import {UsersService} from 'src/users/users.service';
 
 @Injectable()
 export class RelativesService {
-  constructor(@InjectModel(Relative.name) private RelativeModel: Model<RelativeDocument>) {
+  constructor(@InjectModel(Relative.name) private RelativeModel: Model<RelativeDocument>, private usersService: UsersService) {
   }
 
   async createRelative({
@@ -33,17 +34,40 @@ export class RelativesService {
     return relative;
   }
 
-  // async getRelatives(relativesIds: RelativesIdsDto): Promise<Relative[]> {
-  //   const relatives = await this.RelativeModel.find({ _id: { $in: relativesIds.relativesIds } });
-  //   return relatives;
-  // }
-
   async getRelatives(req: Request): Promise<Relative[]> {
     const userId = getReqUserId(req);
     return await this.RelativeModel.find({'access.creatorId': userId});
   }
 
-  async deleteRelative(relativeId: string, @Req() req: Request){
+  /**
+   * Проверяет можно ли удалить родственника
+   * @param relativeId
+   * @param req
+   */
+  async checkRelativeCanDelete(relativeId: string, req: Request) {
+    const userId = getReqUserId(req);
+    const unitRelatives = await this.RelativeModel.countDocuments({
+      $and: [
+        {'access.creatorId': userId},
+        {
+          $or: [
+            {'parents.mother': relativeId},
+            {'parents.father': relativeId}
+          ]
+        }
+      ]
+    });
+
+    if (unitRelatives > 0) {
+      throw new HttpException('113 - Родственник не может быть удален, так какприкреплен к другим родственникам в качестве родителя', HttpStatus.BAD_REQUEST);
+    }
+    const user = await this.usersService.getUser(req);
+    if (user.parents.father == relativeId || user.parents.mother == relativeId){
+      throw new HttpException('114 - Родственник не может быть удален, так указан в качестве родителя пользователя', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async deleteRelative(relativeId: string, @Req() req: Request) {
     const userId = getReqUserId(req);
     const relative = await this.RelativeModel.findById(relativeId);
     if (!relative) {
@@ -52,22 +76,14 @@ export class RelativesService {
     if (relative.access.creatorId !== userId) {
       throw new HttpException('112 - У данного пользователя нет прав на удаление данного родственника', HttpStatus.BAD_REQUEST);
     }
+
+    this.checkRelativeCanDelete(relativeId, req);
+
     if (relative.userPic) {
       removeFilesBackground([relative.userPic]);
     }
     await relative.delete()
   }
-
-  // ПАГИНАЦИЯ
-  // async getRelatives(req: Request, paginationRequest: IPaginationRequest): Promise<{ data: Relative[], pagination: IPaginationResponse }> {
-  //   const userId = getReqUserId(req);
-  //
-  //   return await getDataModelWithPagination({
-  //     model: this.RelativeModel,
-  //     paginationRequest,
-  //     filterObject: {'access.creatorId': userId}
-  //   });
-  // }
 
   async updateRelative({data, relativeId}: UpdateRelativeDto, @Req() req: Request): Promise<Relative> {
     const userId = getReqUserId(req);
@@ -80,29 +96,5 @@ export class RelativesService {
     }
     return await this.RelativeModel.findByIdAndUpdate(relativeId, data, {new: true});
   }
-
-  //   const relatives = await this.RelativeModel
-  //     .find({'access.creatorId': userId})
-  //     .skip(page * pageSize)
-  //     .limit(pageSize);
-  //   return {
-  //     data: relatives,
-  //     pagination: {
-  //       page: page,
-  //       total: await this.RelativeModel.count().exec()
-  //     }
-  //   };
-  // }
-
-  // async updateRelative(data: IRelativeUpdateData): Promise<Relative> {
-  //   const relative = await this.RelativeModel.findByIdAndUpdate(data.id, data.userData);
-  //   return relative;
-  // }
-  //
-  // async deleteRelative(data: IRelativeUpdateData) {
-  //   setTimeout(() => removeFilesBackground([data.userData.userPic]), 10000);
-  //   const result = await this.RelativeModel.findByIdAndDelete(data.id);
-  //   return result;
-  // }
 }
 

@@ -15,6 +15,6 @@ export class AppController {
   @Get(':uploads/:id/:type/:filename')
   @RoleType('user')
   async getTypeFile(@Param() param, @Req() req: any, @Res() res: any) {
-    res.sendFile(param.filename, { root: `${param.uploads}/${param.id}/${param.type}` });
+    await res.sendFile(param.filename, { root: `${param.uploads}/${param.id}/${param.type}` });
   }
 }

@@ -3,12 +3,21 @@ export type IRoleTypes = 'user' | 'guest'
 export interface IPaginationRequest {
   page: string
   pageSize: string
-  searchData?: ISearchData
+}
+
+export interface INotesQuery {
+  pagination: IPaginationRequest,
+  search?: string
+}
+
+export interface IRelativesNotesQuery extends INotesQuery {
+  relativeId: string
 }
 
 export interface IPaginationResponse {
   page: number
   total: number
+  totalAll: number
   pageSize: number
 }
 

@@ -14,9 +14,11 @@ import { UsersService } from './users/users.service';
 import { StorageController } from './storage/storage.controller';
 import { MulterModule } from '@nestjs/platform-express';
 import { RelativesModule } from './relatives/relatives.module';
+import { NotesModule } from './notes/notes.module';
+import { RelativesService } from './relatives/relatives.service';
 
 @Module({
-  imports: [AuthModule, UsersModule, RelativesModule,
+  imports: [AuthModule, UsersModule, RelativesModule, NotesModule,
     MongooseModule.forRoot(process.env.DB_URL),
     MulterModule.register({
       dest: './files',
