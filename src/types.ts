@@ -1,3 +1,5 @@
+import {BaseNoteDto} from './notes/dto/baseNote.dto'
+
 export type IRoleTypes = 'user' | 'guest'
 
 export interface IPaginationRequest {
@@ -43,4 +45,9 @@ export interface INewRelativeData {
 export interface IParents {
   mother?: string
   father?: string
+}
+
+export interface IUpdateNote {
+  id: string,
+  data: BaseNoteDto
 }

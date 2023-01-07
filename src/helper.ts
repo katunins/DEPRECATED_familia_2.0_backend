@@ -94,7 +94,7 @@ export const getDataModelWithPagination = async <T>(params: IGetDataModelWithPag
   const {model, pagination, searchData, baseFilters} = params
   const {page, pageSize} = parsePaginationRequest(pagination)
 
-  const searchArr = baseFilters
+  const searchArr = [...baseFilters]
 
   if (searchData) {
     searchArr.push({

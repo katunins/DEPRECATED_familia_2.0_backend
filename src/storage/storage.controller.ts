@@ -1,6 +1,6 @@
 import {
   Body,
-  Controller, Post, Req,
+  Controller, Delete, Post, Req,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
@@ -55,5 +55,10 @@ export class StorageController {
     }));
     removeFilesBackground(body.filesToDelete);
     return response;
+  }
+
+  @Delete()
+  async deleteFiles(@Body() body: { filesToDelete: string[] }, @Req() req: any) {
+    return await removeFilesBackground(body.filesToDelete);
   }
 }

@@ -6,7 +6,7 @@ export type NoteDocument = Note & Document
 @Schema({ timestamps: true })
 export class Note {
 
-  @Prop({ required: true })
+  @Prop()
   title: string;
 
   @Prop()

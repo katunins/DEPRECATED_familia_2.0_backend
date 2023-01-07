@@ -77,7 +77,7 @@ export class RelativesService {
       throw new HttpException('112 - У данного пользователя нет прав на удаление данного родственника', HttpStatus.BAD_REQUEST);
     }
 
-    this.checkRelativeCanDelete(relativeId, req);
+    await this.checkRelativeCanDelete(relativeId, req);
 
     if (relative.userPic) {
       removeFilesBackground([relative.userPic]);
