@@ -1,11 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-export type NoteDocument = Note & Document
+export type NoteDocument = Note & Document;
 
 @Schema({ timestamps: true })
 export class Note {
-
   @Prop()
   title: string;
 

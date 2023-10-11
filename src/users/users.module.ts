@@ -10,12 +10,9 @@ import Config from 'src/config';
   providers: [UsersService],
   controllers: [UsersController],
   imports: [
-    JwtModule.register({secret: Config.jwtSecret}),
-    MongooseModule.forFeature([
-      { name: User.name, schema: UserSchema },
-    ]),
+    JwtModule.register({ secret: Config.jwtSecret }),
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
-  exports: [MongooseModule]
+  exports: [MongooseModule],
 })
-export class UsersModule {
-}
+export class UsersModule {}

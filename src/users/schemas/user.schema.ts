@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-export type UserDocument = User & Document
+export type UserDocument = User & Document;
 
 @Schema()
 export class User {
@@ -19,9 +19,9 @@ export class User {
 
   @Prop({ type: Object })
   parents: {
-    mother: string
-    father: string
-  }
+    mother: string;
+    father: string;
+  };
 
   @Prop()
   userPic: string;
@@ -31,7 +31,6 @@ export class User {
 
   @Prop()
   birthday: string;
-
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

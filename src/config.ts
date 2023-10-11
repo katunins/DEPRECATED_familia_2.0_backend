@@ -5,5 +5,5 @@ const Config = {
   refreshTokenTimeout: '20 days',
   baseURL: 'https://familia.ikatunin.ru',
   storageFolder: 'uploads',
-}
+};
 export default Config;

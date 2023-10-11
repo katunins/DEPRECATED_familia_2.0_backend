@@ -12,12 +12,11 @@ import Config from 'src/config';
   providers: [RelativesService, UsersService],
   controllers: [RelativesController],
   imports: [
-    JwtModule.register({secret: Config.jwtSecret}),
+    JwtModule.register({ secret: Config.jwtSecret }),
     MongooseModule.forFeature([
       { name: Relative.name, schema: RelativeSchema },
     ]),
-    forwardRef(() => UsersModule)
+    forwardRef(() => UsersModule),
   ],
 })
-export class RelativesModule {
-}
+export class RelativesModule {}

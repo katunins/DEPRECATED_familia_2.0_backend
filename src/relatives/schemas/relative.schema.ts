@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-export type RelativeDocument = Relative & Document
+export type RelativeDocument = Relative & Document;
 
 @Schema()
 export class Relative {
@@ -19,9 +19,9 @@ export class Relative {
 
   @Prop({ type: Object, required: true })
   parents: {
-    mother: string
-    father: string
-  }
+    mother: string;
+    father: string;
+  };
 
   @Prop({ type: Object, required: true })
   access: {

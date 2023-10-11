@@ -6,7 +6,7 @@ export class UserDto {
   readonly about: string;
   readonly birthday: string;
   readonly parents: {
-    mother: string
-    father: string
-  }
+    mother: string;
+    father: string;
+  };
 }

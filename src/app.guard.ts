@@ -2,23 +2,23 @@ import {
   Injectable,
   CanActivate,
   ExecutionContext,
-  HttpException, HttpStatus
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
-import {Request} from 'express';
-import {AppService} from './app.service';
-import {Reflector} from '@nestjs/core';
-import {IRoleTypes} from './types';
-import {tokenExtractor} from './helper';
-import {AuthService} from './auth/auth.service';
+import { Request } from 'express';
+import { AppService } from './app.service';
+import { Reflector } from '@nestjs/core';
+import { IRoleTypes } from './types';
+import { tokenExtractor } from './helper';
+import { AuthService } from './auth/auth.service';
 
 @Injectable()
 export class AppGuard implements CanActivate {
   constructor(
     private readonly appService: AppService,
     private readonly authService: AuthService,
-    private reflector: Reflector
-  ) {
-  }
+    private reflector: Reflector,
+  ) {}
 
   /**
    * Проверяет параметры в headers
@@ -29,11 +29,14 @@ export class AppGuard implements CanActivate {
    */
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest() as Request;
-    const roleType = this.reflector.get<IRoleTypes>('roleType', context.getHandler());
+    const roleType = this.reflector.get<IRoleTypes>(
+      'roleType',
+      context.getHandler(),
+    );
     if (roleType === 'guest') return true;
     await this.authService.checkDecodeToken(
-      tokenExtractor(request.headers['authorization'])
-    )
-    return true
+      tokenExtractor(request.headers['authorization']),
+    );
+    return true;
   }
 }

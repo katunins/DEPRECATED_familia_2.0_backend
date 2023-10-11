@@ -4,9 +4,9 @@ export class RelativeDto {
   readonly about: string;
   readonly birthday: string;
   readonly parents: {
-    mother: string
-    father: string
-  }
+    mother: string;
+    father: string;
+  };
   readonly access: {
     creatorId: string;
     shareId: [string];

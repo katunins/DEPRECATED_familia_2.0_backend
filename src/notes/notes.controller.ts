@@ -1,18 +1,31 @@
 import {
   Body,
-  Controller, HttpCode, HttpStatus, UseFilters, Post, Delete, Get, Query, Req, Patch, Put,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  UseFilters,
+  Post,
+  Delete,
+  Get,
+  Query,
+  Req,
+  Patch,
+  Put,
 } from '@nestjs/common';
-import {Note} from './schemas/note.schema';
-import {NotesService} from './notes.service';
-import {IPaginationRequest, INotesQuery, IRelativesNotesQuery, IUpdateNote} from 'src/types';
-import {RoleType} from 'src/decorators';
-import {BaseNoteDto} from './dto/baseNote.dto';
+import { Note } from './schemas/note.schema';
+import { NotesService } from './notes.service';
+import {
+  IPaginationRequest,
+  INotesQuery,
+  IRelativesNotesQuery,
+  IUpdateNote,
+} from 'src/types';
+import { RoleType } from 'src/decorators';
+import { BaseNoteDto } from './dto/baseNote.dto';
 
 @Controller('notes')
 export class NotesController {
-
-  constructor(private readonly notesService: NotesService) {
-  }
+  constructor(private readonly notesService: NotesService) {}
 
   @Get()
   @RoleType('user')
@@ -28,7 +41,10 @@ export class NotesController {
 
   @Get('user-count')
   @RoleType('user')
-  getRelativeNotesCount(@Req() req: Request, @Query() query: { relativeId: string }) {
+  getRelativeNotesCount(
+    @Req() req: Request,
+    @Query() query: { relativeId: string },
+  ) {
     return this.notesService.getRelativeNotesCount(req, query.relativeId);
   }
 
